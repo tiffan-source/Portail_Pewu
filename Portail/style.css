@@ -1,0 +1,51 @@
+#main, #app{
+    height: 100vh;
+}
+
+#main{
+    position: relative;
+}
+
+.panel{
+    position: absolute;
+    width: 100%;
+}
+
+.panel-head{
+    background: linear-gradient(0deg, #002147 0%, #210cac 100%);
+}
+
+.app-head{
+    background: linear-gradient(0deg, #002147 0%, #210cac 100%);
+}
+
+.panel-body{
+    box-shadow: 0 4px 4px #e2e2e2;
+}
+
+.list-head{
+    list-style: none;
+    color: #002147;
+    text-transform: uppercase;
+}
+
+.list-group{
+    margin: 1rem 0;
+}
+
+@media screen and (min-width : 768px) {
+
+    .panel{
+        position: initial;
+    }
+
+    #main{
+        display: grid;
+        grid-template-columns: auto 1fr;
+    }
+
+    .panel-body{
+        box-shadow: none;
+    }
+    
+}
