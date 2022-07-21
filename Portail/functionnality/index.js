@@ -13,30 +13,7 @@ let portail_functionality = {
 
     state : {
         lock : false,
-
-        locker :  {
-            view : ()=>{
-                return (
-                    m("div", {"class":"bg-white p-5 shadow-lg rounded"},
-                        [
-                            m("h3", {"class":"text-primary"}, 
-                            "Periode d'inactivite detecter"
-                            ),
-                            m("label", {"class":"form-label","for":"locker-psw"}, 
-                            "Entrer votre mot de passe pour continuer "
-                            ),
-                            m("input", {"class":"form-control mb-3","type":"password","placeholder":"Password","id":"locker-psw"}),
-                            m("div", {"class":"alert alert-danger d-none","role":"alert", "id" : "locker-alert"}, 
-                            "Mauvais mot de Passe"
-                            ),
-                            m("button", {"class":"btn btn-primary shadow",onclick: portail_functionality.unlock_screen}, 
-                            " Connection "
-                            )
-                        ]
-                    )
-                )
-            }
-        }
+        alert : []
     },
 
     /**
@@ -102,7 +79,7 @@ let portail_functionality = {
             let locker_point = document.querySelector("#locker");
 
             locker_point.classList.remove("d-none");
-            m.mount(locker_point, portail_functionality.state.locker);
+            m.mount(locker_point, locker);
 
             return portail_functionality.setLockState(true);
         }
@@ -115,9 +92,12 @@ let portail_functionality = {
      */
 
     unlock_screen : ()=>{
+
+        let locker_app = document.querySelector("#locker");
+
         if (portail_functionality.getLockState()){
-            m.mount(locker, null);
-            locker.classList.add("d-none")
+            m.mount(locker_app, null);
+            locker_app.classList.add("d-none")
 
             return (!portail_functionality.setLockState(false));
         }
@@ -134,4 +114,75 @@ let portail_functionality = {
         return portail_functionality.state.lock = bool;
     },
 
+    /**
+     * Add alert to array alert
+     * @param {object} alert 
+     * @returns alert length
+     */
+
+    addAlert : (alert)=>{
+        return portail_functionality.state.alert.push({message : alert.message, type : alert.type});
+    },
+
+    /**
+     * remove first alert to array alert
+     * @returns Alert remove
+     */
+
+    removeAlert : ()=>{
+        return portail_functionality.state.alert.shift();
+    },
+
+    /**
+     * Call alert in portail
+     */
+
+    alert : ()=>{
+        let modal_alert_group = document.querySelector("#alert-modal-group");
+
+        // if ( portail_functionality.state.alert.length != 0 ){
+            
+            let container_alert = {
+                view : ()=>{
+                    return m("div", portail_functionality.state.alert.map(data=>{
+                        return m("div", {"class":"alert-modal"},
+                            [
+                                m("span", {"id":"close-alert"}, 
+                                    m("i", {"class":"fa-solid fa-xmark"})
+                                ),
+                                m("br"),
+                                data.message
+                            ]
+                        )
+                    }))
+                }
+            }
+
+            m.mount(modal_alert_group, container_alert);
+
+            document.querySelectorAll("#close-alert").forEach(node=>{
+
+                node.addEventListener("click", (e)=>{
+                    node.parentNode.remove()
+                })
+
+            })
+
+            if (portail_functionality.state.alert.length != 0 ){
+                setTimeout(()=>{
+                    portail_functionality.removeAlert();
+                    portail_functionality.alert();
+                }, 2000);
+            }
+        // }
+    },
+
+    /**
+     * Define name of component select in title app
+     * @param {string} component_name 
+     */
+
+    set_compname : (component_name)=>{
+        document.querySelector("#comp-name").innerHTML = component_name;
+    }
 }

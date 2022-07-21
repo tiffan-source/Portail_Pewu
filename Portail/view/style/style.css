@@ -59,3 +59,23 @@
 
     z-index: 1000;
 }
+
+/* Alert Style */
+
+.alert-modal-group{
+    position: absolute;
+    right: 0;
+    top: 10rem;
+    padding:1rem;
+
+}
+
+.alert-modal{
+    min-width: 150px;
+    max-width: 200px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 4px black;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+}

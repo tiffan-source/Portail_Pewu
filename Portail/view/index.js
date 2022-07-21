@@ -1,8 +1,6 @@
 let portail = {
     oninit : () =>{
-        // Au demarrage j'appelle le lock screen 
-        // localStorage.setItem("locker", false);
-        // portail_functionality.lock_screen();
+        
     },
 
     view : ()=>{
@@ -11,3 +9,5 @@ let portail = {
 }
 
 m.mount(document.querySelector("#portail"), portail);
+
+// m.mount(document.querySelector("#alert-modal"), alert_modal);
