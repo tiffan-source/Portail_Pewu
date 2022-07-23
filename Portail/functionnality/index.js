@@ -13,7 +13,7 @@ let portail_functionality = {
 
     state : {
         lock : false,
-        alert : []
+        alerts : []
     },
 
     /**
@@ -74,36 +74,48 @@ let portail_functionality = {
      * @returns {boolean} - true for success false else
      */
 
-    lockScreen : ()=>{
-        if ( portail_functionality.getLockState() == false){
+    // lockScreen : ()=>{
+    //     if ( portail_functionality.getLockState() == false){
+    //         let locker_point = document.querySelector("#locker");
+
+    //         locker_point.classList.remove("d-none");
+    //         m.mount(locker_point, locker);
+
+    //         return portail_functionality.setLockState(true);
+    //     }
+
+    //     return (false)
+    // },
+
+    lock : (locker_content)=>{
+        if (locker_content && !portail_functionality.getLockState())
+        {
             let locker_point = document.querySelector("#locker");
 
             locker_point.classList.remove("d-none");
-            m.mount(locker_point, locker);
-
+   
             return portail_functionality.setLockState(true);
         }
-
-        return (false)
+        return portail_functionality.setLockState(false);
     },
 
     /**
      * unlocke screen by removing locker ( @locker )
      */
 
-    unlock_screen : ()=>{
+    // unlock_screen : ()=>{
 
-        let locker_app = document.querySelector("#locker");
+    //     let locker_app = document.querySelector("#locker");
 
-        if (portail_functionality.getLockState()){
-            m.mount(locker_app, null);
-            locker_app.classList.add("d-none")
+    //     if (portail_functionality.getLockState()){
+    //         m.mount(locker_app, null);
+    //         locker_app.classList.add("d-none")
 
-            return (!portail_functionality.setLockState(false));
-        }
+    //         return (!portail_functionality.setLockState(false));
+    //     }
 
-        return (false);
-    },
+    //     return (false);
+    // },
 
     /**
      * setLockState - 
@@ -121,7 +133,7 @@ let portail_functionality = {
      */
 
     addAlert : (alert)=>{
-        return portail_functionality.state.alert.push({message : alert.message, type : alert.type});
+        return portail_functionality.state.alerts.push({message : alert.message, type : alert.type});
     },
 
     /**
@@ -129,52 +141,36 @@ let portail_functionality = {
      * @returns Alert remove
      */
 
-    removeAlert : ()=>{
-        return portail_functionality.state.alert.shift();
+    removeAlert : (alert)=>{
+        portail_functionality.state.alerts = portail_functionality.state.alerts.filter((element)=>{
+            return alert.message != element.message || alert.timeout != element.timeout || alert.timeId != element.timeId;
+        })
     },
 
     /**
      * Call alert in portail
      */
 
-    alert : ()=>{
-        let modal_alert_group = document.querySelector("#alert-modal-group");
+    alert : (message, timeout = 2000)=>{
+        
+        let alert = {
+            message,
+        }
 
-        // if ( portail_functionality.state.alert.length != 0 ){
-            
-            let container_alert = {
-                view : ()=>{
-                    return m("div", portail_functionality.state.alert.map(data=>{
-                        return m("div", {"class":"alert-modal"},
-                            [
-                                m("span", {"id":"close-alert"}, 
-                                    m("i", {"class":"fa-solid fa-xmark"})
-                                ),
-                                m("br"),
-                                data.message
-                            ]
-                        )
-                    }))
-                }
-            }
+        if (timeout)
+        {
+            alert.timeout = timeout;
+            alert.timeId = setTimeout(()=>{
 
-            m.mount(modal_alert_group, container_alert);
+                portail_functionality.removeAlert(alert);
 
-            document.querySelectorAll("#close-alert").forEach(node=>{
+            }, timeout, alert);
+        }
+        else
+            timeout = null;
 
-                node.addEventListener("click", (e)=>{
-                    node.parentNode.remove()
-                })
+        portail_functionality.state.alerts.push(alert);
 
-            })
-
-            if (portail_functionality.state.alert.length != 0 ){
-                setTimeout(()=>{
-                    portail_functionality.removeAlert();
-                    portail_functionality.alert();
-                }, 2000);
-            }
-        // }
     },
 
     /**
