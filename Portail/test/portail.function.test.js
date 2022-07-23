@@ -1,5 +1,11 @@
 const {test} = QUnit;
 
+let my_locker = document.createElement("div");
+my_locker.id = "locker";
+my_locker.classList.add("d-none");
+
+let querySelector;
+
 QUnit.module("Setter and Getter Locker function", ()=>{
     test("Set locke state", assert=>{
         assert.equal(portail_functionality.setLockState(true), portail_functionality.state.lock, "Set Screen lock true")
@@ -15,38 +21,16 @@ QUnit.module("Setter and Getter Locker function", ()=>{
 
 });
 
-QUnit.module("Locker Controlle function", ()=>{
 
-    test('Should lock my screen', assert=>{
+QUnit.module("Lock generic", {
+    beforeEach : ()=>{
+        querySelector = sinon.stub(document, "querySelector").returns(my_locker);
+    },
 
-        let my_locker = document.createElement("div");
-        my_locker.id = "locker";
-        my_locker.classList.add("d-none");
-
-        let querySelector = sinon.stub(document, "querySelector").returns(my_locker);
-
-        assert.equal(portail_functionality.lockScreen(), true, "Lock the screen");
-
-        querySelector.restore();
-    })
-
-    test('Should not lock my screen when already lock', assert=>{
-
-        let my_locker = document.createElement("div");
-        my_locker.id = "locker";
-        my_locker.classList.add("d-none");
-
-        let querySelector = sinon.stub(document, "querySelector").returns(my_locker);
-
-        portail_functionality.setLockState(true)
-
-        assert.equal(portail_functionality.lockScreen(), false, "dont Lock the screen");
-
-        querySelector.restore();
-    })
-});
-
-QUnit.module("Lock generic", ()=>{
+    afterEach : ()=>{
+        querySelector.restore()
+    }
+}, ()=>{
 
 
     test("Should take parameter", assert=>{
@@ -63,13 +47,6 @@ QUnit.module("Lock generic", ()=>{
 
         portail_functionality.setLockState(false);
 
-
-        let my_locker = document.createElement("div");
-        my_locker.id = "locker";
-        my_locker.classList.add("d-none");
-
-        let querySelector = sinon.stub(document, "querySelector").returns(my_locker);
-
         assert.equal(portail_functionality.lock({test : "test"}), true);
         assert.equal(my_locker.classList.contains("d-none"), false)
 
@@ -78,45 +55,48 @@ QUnit.module("Lock generic", ()=>{
 
 })
 
+QUnit.module("Unlock", {
+    beforeEach : ()=>{
+        querySelector = sinon.stub(document, "querySelector").returns(my_locker);
+    },
 
-    // QUnit.module("UnLocker Controlle function", ()=>{
+    afterEach : ()=>{
+        querySelector.restore()
+    }
+} ,()=>{
+    test("Should not lock if not lock", (assert)=>{
+        portail_functionality.setLockState(false)
 
-    //     test('Should unlock my screen', assert=>{
+        assert.equal(portail_functionality.unlock(), false, "Not unlock screen");
+    })
 
-    //         let my_locker = document.createElement("div");
-    //         my_locker.id = "locker";
-    //         my_locker.classList.add("d-none");
+    test("Should add class d-none of locker", assert=>{
+        
+        portail_functionality.lock({})
 
-    //         let querySelector = sinon.stub(document, "querySelector").returns(my_locker);
+        portail_functionality.unlock();
 
-    //         assert.equal(portail_functionality.unlock_screen(), true, "unlock the screen");
+        assert.equal(my_locker.classList.contains("d-none"), true, "Add class d-none");
 
-    //         querySelector.restore();
-    //     })
-    // });
+        querySelector.restore();
+    })
+
+    test("Should unlock screen", assert=>{
+        portail_functionality.lock({})
+
+        assert.equal(portail_functionality.unlock(), true, "Unlock screen")
+        assert.equal(portail_functionality.getLockState(), false, "Unlock screen confirm with getter")
+
+        querySelector.restore()
+
+    })
+})
 
 QUnit.module("Alert fuction Test", {
     afterEach : (()=>{
         portail_functionality.state.alerts = [];
     })
 }, ()=>{
-
-    // test("Remove Alert", assert=>{
-    //     portail_functionality.state.alert[0] = "data";
-
-    //     assert.equal(portail_functionality.removeAlert(), "data", "remove last data")
-    // })
-
-    // test("Add Alert return current length", (assert)=>{
-    //     assert.equal(portail_functionality.addAlert("test"), portail_functionality.state.alert.length);
-    // })
-
-    // test("Add Alert add data", (assert)=>{
-
-    //     portail_functionality.addAlert({message : "alert", type : "tes"}, )
-
-    //     assert.equal(portail_functionality.state.alert[portail_functionality.state.alert.length - 1].message, "alert", "Add last data");
-    // })
 
     test("Should add alert", assert=>{
         portail_functionality.alert("Message");
