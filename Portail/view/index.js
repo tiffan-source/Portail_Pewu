@@ -1,6 +1,13 @@
+let alertSetter = {
+    view : ()=>{
+        
+    }
+}
+
 let portail = {
 
     oninit : () =>{
+
         
     },
 

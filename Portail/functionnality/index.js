@@ -1,3 +1,5 @@
+
+
 /**
  * All functionnality and state of portail
  */
@@ -59,6 +61,14 @@ let portail_functionality = {
         }
     },
 
+    /**
+     * setLockState - 
+     * @param {boolean} bool - Boolean indicate portail state 
+     */
+
+     setLockState : (bool)=>{
+        return portail_functionality.state.lock = bool;
+    },
 
     /**
      * Get portail lock state
@@ -69,25 +79,10 @@ let portail_functionality = {
         return (portail_functionality.state.lock);
     },
 
-    /**
-     * Lock portail by adding a locker ( @locker )
-     * @returns {boolean} - true for success false else
-     */
-
-    // lockScreen : ()=>{
-    //     if ( portail_functionality.getLockState() == false){
-    //         let locker_point = document.querySelector("#locker");
-
-    //         locker_point.classList.remove("d-none");
-    //         m.mount(locker_point, locker);
-
-    //         return portail_functionality.setLockState(true);
-    //     }
-
-    //     return (false)
-    // },
-
     lock : (locker_content)=>{
+
+        // Pas tres efficace ... Penser a une autre solution
+
         if (locker_content && !portail_functionality.getLockState())
         {
             let locker_point = document.querySelector("#locker");
@@ -99,31 +94,16 @@ let portail_functionality = {
         return portail_functionality.setLockState(false);
     },
 
-    /**
-     * unlocke screen by removing locker ( @locker )
-     */
+    unlock: ()=>{
+        if(portail_functionality.getLockState() == true){
+            let locker_point = document.querySelector("#locker");
 
-    // unlock_screen : ()=>{
+            locker_point.classList.add("d-none");
 
-    //     let locker_app = document.querySelector("#locker");
+            return !portail_functionality.setLockState(false);
+        }
 
-    //     if (portail_functionality.getLockState()){
-    //         m.mount(locker_app, null);
-    //         locker_app.classList.add("d-none")
-
-    //         return (!portail_functionality.setLockState(false));
-    //     }
-
-    //     return (false);
-    // },
-
-    /**
-     * setLockState - 
-     * @param {boolean} bool - Boolean indicate portail state 
-     */
-
-    setLockState : (bool)=>{
-        return portail_functionality.state.lock = bool;
+        return false;
     },
 
     /**
@@ -180,5 +160,18 @@ let portail_functionality = {
 
     set_compname : (component_name)=>{
         document.querySelector("#comp-name").innerHTML = component_name;
+    },
+
+    set_generic_modal : (title, content, action)=>{
+        let modal_generique = document.querySelector("#portail-modal");
+
+        modal_generique.querySelector("#portail-modal-title").innerHTML = title;
+        modal_generique.querySelector("#portail-modal-body").innerHTML = content;
+
+        modal_generique.querySelector("#portail-modal-action").addEventListener("click", (e)=>{
+            e.preventDefault();
+            if(action)
+                action();
+        })
     }
 }
