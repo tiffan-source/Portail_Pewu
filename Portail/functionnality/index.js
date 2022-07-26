@@ -15,7 +15,7 @@ let portail_functionality = {
 
     state : {
         lock : false,
-        alerts : []
+        alerts : [],
     },
 
     /**
@@ -23,6 +23,7 @@ let portail_functionality = {
      */
 
     toogle_panel : ()=>{
+
         let panel = document.querySelector("#panel");
         let app_panel_name = document.querySelector("#panel-app-name");
         let list_content = document.querySelectorAll(".list-group-item span");
@@ -88,6 +89,24 @@ let portail_functionality = {
             let locker_point = document.querySelector("#locker");
 
             locker_point.classList.remove("d-none");
+
+            modal_component.setModal({
+                title : "Test",
+                content : "Bonjour tout le monde",
+                button : [
+                    {
+                        text : "Action1",
+                        action : ()=>{console.log("Bonjour");}
+                    },
+                    {
+                        text : "Action1",
+                        action : ()=>{console.log("Merci");}
+                    },
+                ],
+                layouts : ""
+            })
+
+            modal_component.getModal()
    
             return portail_functionality.setLockState(true);
         }
@@ -99,6 +118,8 @@ let portail_functionality = {
             let locker_point = document.querySelector("#locker");
 
             locker_point.classList.add("d-none");
+
+            modal_component.hiddeModal();
 
             return !portail_functionality.setLockState(false);
         }
@@ -113,7 +134,7 @@ let portail_functionality = {
      */
 
     addAlert : (alert)=>{
-        return portail_functionality.state.alerts.push({message : alert.message, type : alert.type});
+        return portail_functionality.state.alerts.push(alert);
     },
 
     /**
@@ -124,6 +145,17 @@ let portail_functionality = {
     removeAlert : (alert)=>{
         portail_functionality.state.alerts = portail_functionality.state.alerts.filter((element)=>{
             return alert.message != element.message || alert.timeout != element.timeout || alert.timeId != element.timeId;
+        })
+
+        m.redraw();
+    },
+
+    removeAlertWithId : (id)=>{
+        clearTimeout(id);
+
+        portail_functionality.state.alerts.forEach(element=>{
+            if (element.timeId == id)
+                portail_functionality.removeAlert(element);
         })
     },
 
@@ -146,10 +178,12 @@ let portail_functionality = {
 
             }, timeout, alert);
         }
-        else
-            timeout = null;
+        else{
+            alert.timeId = null
+            alert.timeout = null
+        }
 
-        portail_functionality.state.alerts.push(alert);
+        portail_functionality.addAlert(alert);
 
     },
 
@@ -173,5 +207,5 @@ let portail_functionality = {
             if(action)
                 action();
         })
-    }
+    },
 }
